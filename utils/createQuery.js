@@ -8,6 +8,7 @@ import {
   getDocs,
   getFirestore,
   query,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { response } from "express";
@@ -26,7 +27,7 @@ async function getByParam(tabela, chave, valor) {
         data: [],
       };
       querySnapshot.forEach((doc) => {
-        response.data.push(doc.data());
+        response.data.push({ ...doc.data(), docId: doc.id });
       });
       return response;
     } else {
@@ -72,7 +73,6 @@ async function getByDocId(tabela, id) {
   }
 }
 async function createDocument(tabela, data) {
-  console.log(tabela, data);
   try {
     const docRef = await addDoc(collection(db, tabela), data);
     const message = {
@@ -90,5 +90,14 @@ async function createDocument(tabela, data) {
     return message;
   }
 }
-
-export { getByParam, getByDocId, createDocument };
+async function updateDocument(tabela, data, docId) {
+  const docRef = doc(db, tabela, docId);
+  try {
+    await updateDoc(docRef, data);
+    return { message: "user update success", status: true };
+  } catch (e) {
+    console.log(e);
+    return { message: "Error: ", e, status: false };
+  }
+}
+export { getByParam, getByDocId, createDocument, updateDocument };

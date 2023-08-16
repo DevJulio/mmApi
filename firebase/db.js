@@ -35,7 +35,6 @@ async function getAllUsers() {
   const querySnapshot = await getDocs(collection(db, "users"));
 
   const users = [];
-  console.log(querySnapshot);
   querySnapshot.forEach((doc) => {
     users.push({ id: doc.id, data: doc.data() });
   });
