@@ -6,9 +6,14 @@ import {
   postCompanySolicitation,
   signInlogin,
 } from "./controllers/auth.js";
-import { getUser, postUser } from "./controllers/users.js";
+import { getUser, postUser, putUser } from "./controllers/users.js";
 import { imageUploader } from "./controllers/imageUploader.js";
-import { postCompany, putCompany } from "./controllers/companies.js";
+import {
+  getCompany,
+  getUrlCompany,
+  postCompany,
+  putCompany,
+} from "./controllers/companies.js";
 
 const routes = express.Router();
 /*SIGNIN*/
@@ -17,10 +22,14 @@ routes.post("/create-login", createLogin);
 /*USERS*/
 routes.post("/users/create", postUser);
 routes.get("/users/user", getUser);
+routes.put("/users/put/:uid", putUser);
+
 /*COMPANIES*/
 routes.post("/companies/create", postCompany);
 routes.put("/companies/put/:id", putCompany);
-routes.get("/companies/get", getUser);
+routes.get("/companies/company", getCompany);
+routes.get("/companies/url", getUrlCompany);
+
 /*UTILS*/
 routes.post("/utils/create-solicitation", postCompanySolicitation);
 routes.post("/utils/fileUpload", imageUploader);

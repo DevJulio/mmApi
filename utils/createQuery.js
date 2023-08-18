@@ -11,7 +11,6 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { response } from "express";
 const auth = getAuth(app);
 const db = getFirestore(app);
 const user = auth.currentUser;
@@ -74,7 +73,14 @@ async function getByDocId(tabela, id) {
 }
 async function createDocument(tabela, data) {
   try {
-    const docRef = await addDoc(collection(db, tabela), data);
+    const newDate = new Date();
+    const docRef = await addDoc(collection(db, tabela), {
+      ...data,
+      createdAt: {
+        seconds: newDate.getTime() / 1000,
+        nanoseconds: newDate.getMilliseconds(),
+      },
+    });
     const message = {
       status: true,
       message: "Document written",
@@ -92,12 +98,66 @@ async function createDocument(tabela, data) {
 }
 async function updateDocument(tabela, data, docId) {
   const docRef = doc(db, tabela, docId);
+  const newDate = new Date();
   try {
-    await updateDoc(docRef, data);
-    return { message: "user update success", status: true };
+    await updateDoc(docRef, {
+      ...data,
+      updatedAt: {
+        seconds: newDate.getTime() / 1000,
+        nanoseconds: newDate.getMilliseconds(),
+      },
+    });
+    return { message: "update success", status: true };
   } catch (e) {
     console.log(e);
     return { message: "Error: ", e, status: false };
   }
 }
-export { getByParam, getByDocId, createDocument, updateDocument };
+async function updateWhere(tabela, payload, chave, valor) {
+  try {
+    const newDate = new Date();
+    const ref = collection(db, tabela);
+    const q = query(ref, where(chave, "==", valor));
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.size > 0) {
+      const resArr = [];
+      querySnapshot.forEach(async (docRes) => {
+        const docRef = doc(db, tabela, docRes.id);
+        resArr.push(
+          await updateDoc(docRef, {
+            ...payload,
+            updatedAt: {
+              seconds: newDate.getTime() / 1000,
+              nanoseconds: newDate.getMilliseconds(),
+            },
+          })
+        );
+      });
+      const updateRes = await Promise.all(resArr)
+        .then(() => {
+          return {
+            status: true,
+            message: "Atualizado com sucesso!",
+          };
+        })
+        .catch((error) => {
+          console.error(error);
+          return {
+            status: false,
+            message: "Erro ao atualizar",
+          };
+        });
+      return updateRes;
+    } else {
+      const response = {
+        status: false,
+        message: "sem correspondência.",
+      };
+      return response;
+    }
+  } catch (error) {
+    console.log(error);
+    return { message: error, status: false };
+  }
+}
+export { getByParam, getByDocId, createDocument, updateDocument, updateWhere };
