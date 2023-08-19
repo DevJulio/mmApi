@@ -2,6 +2,7 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import app from "../firebase/app.js";
 import {
   addDoc,
+  and,
   collection,
   doc,
   getDoc,
@@ -19,6 +20,42 @@ async function getByParam(tabela, chave, valor) {
   try {
     const ref = collection(db, tabela);
     const q = query(ref, where(chave, "==", valor));
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.size > 0) {
+      const response = {
+        status: true,
+        data: [],
+      };
+      querySnapshot.forEach((doc) => {
+        response.data.push({ ...doc.data(), docId: doc.id });
+      });
+      return response;
+    } else {
+      const response = {
+        status: false,
+        message: "sem correspondência.",
+      };
+      return response;
+    }
+  } catch (error) {
+    console.log(error);
+    const response = {
+      status: false,
+      message: error.message,
+    };
+    return response;
+  }
+}
+async function getByParams(tabela, main, aux) {
+  try {
+    const ref = collection(db, tabela);
+    const q = query(
+      ref,
+      where(main.chave, "==", main.valor),
+      aux.map((a) => {
+        where(a.chave, a.operador, a.valor);
+      })
+    );
     const querySnapshot = await getDocs(q);
     if (querySnapshot.size > 0) {
       const response = {
@@ -160,4 +197,11 @@ async function updateWhere(tabela, payload, chave, valor) {
     return { message: error, status: false };
   }
 }
-export { getByParam, getByDocId, createDocument, updateDocument, updateWhere };
+export {
+  getByParam,
+  getByDocId,
+  createDocument,
+  updateDocument,
+  updateWhere,
+  getByParams,
+};
