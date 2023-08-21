@@ -46,16 +46,16 @@ async function getByParam(tabela, chave, valor) {
     return response;
   }
 }
-async function getByParams(tabela, main, aux) {
+
+async function getByParams(tabela, params) {
   try {
     const ref = collection(db, tabela);
-    const q = query(
-      ref,
-      where(main.chave, "==", main.valor),
-      aux.map((a) => {
-        where(a.chave, a.operador, a.valor);
-      })
-    );
+    let whereConds = [];
+
+    for (let w of params) {
+      whereConds.push(where(w[0], w[1], w[2]));
+    }
+    const q = query(ref, whereConds);
     const querySnapshot = await getDocs(q);
     if (querySnapshot.size > 0) {
       const response = {
@@ -82,6 +82,7 @@ async function getByParams(tabela, main, aux) {
     return response;
   }
 }
+
 async function getByDocId(tabela, id) {
   try {
     const docRef = doc(db, tabela, id);
