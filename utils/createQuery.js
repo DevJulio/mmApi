@@ -57,6 +57,7 @@ async function getByParams(tabela, params) {
     }
     const q = query(ref, whereConds);
     const querySnapshot = await getDocs(q);
+
     if (querySnapshot.size > 0) {
       const response = {
         status: true,
@@ -151,6 +152,7 @@ async function updateDocument(tabela, data, docId) {
     return { message: "Error: ", e, status: false };
   }
 }
+
 async function updateWhere(tabela, payload, chave, valor) {
   try {
     const newDate = new Date();

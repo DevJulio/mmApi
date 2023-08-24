@@ -1,8 +1,8 @@
 import express from "express";
 import {
-  aproveSolicitation,
   createLogin,
   getSolicitations,
+  keepSolicitations,
   postCompanySolicitation,
   signInlogin,
 } from "./controllers/auth.js";
@@ -35,6 +35,6 @@ routes.post("/utils/create-solicitation", postCompanySolicitation);
 routes.post("/utils/fileUpload", imageUploader);
 /*ADEMIRO*/
 routes.get("/ademiro/getSolicitations", getSolicitations);
-routes.put("/ademiro/putSolicitations/:id", aproveSolicitation);
+routes.put("/ademiro/putSolicitations/:id", keepSolicitations);
 
 export default routes;
