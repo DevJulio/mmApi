@@ -16,6 +16,35 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const user = auth.currentUser;
 
+async function getAll(tabela) {
+  try {
+    const ref = collection(db, tabela);
+    const querySnapshot = await getDocs(query(ref));
+    if (querySnapshot.size > 0) {
+      const response = {
+        status: true,
+        data: [],
+      };
+      querySnapshot.forEach((doc) => {
+        response.data.push({ ...doc.data(), docId: doc.id });
+      });
+      return response;
+    } else {
+      const response = {
+        status: false,
+        message: "sem correspondência.",
+      };
+      return response;
+    }
+  } catch (error) {
+    console.log(error);
+    const response = {
+      status: false,
+      message: error.message,
+    };
+    return response;
+  }
+}
 async function getByParam(tabela, chave, valor) {
   try {
     const ref = collection(db, tabela);
@@ -46,7 +75,6 @@ async function getByParam(tabela, chave, valor) {
     return response;
   }
 }
-
 async function getByParams(tabela, params) {
   try {
     const ref = collection(db, tabela);
@@ -83,7 +111,6 @@ async function getByParams(tabela, params) {
     return response;
   }
 }
-
 async function getByDocId(tabela, id) {
   try {
     const docRef = doc(db, tabela, id);
@@ -152,7 +179,6 @@ async function updateDocument(tabela, data, docId) {
     return { message: "Error: ", e, status: false };
   }
 }
-
 async function updateWhere(tabela, payload, chave, valor) {
   try {
     const newDate = new Date();
@@ -207,4 +233,5 @@ export {
   updateDocument,
   updateWhere,
   getByParams,
+  getAll,
 };

@@ -14,6 +14,11 @@ import {
   postCompany,
   putCompany,
 } from "./controllers/companies.js";
+import {
+  getCategories,
+  postCategory,
+  putCategories,
+} from "./controllers/categories.js";
 
 const routes = express.Router();
 /*SIGNIN*/
@@ -29,7 +34,10 @@ routes.post("/companies/create", postCompany);
 routes.put("/companies/put/:id", putCompany);
 routes.get("/companies/company", getCompany);
 routes.get("/companies/url", getUrlCompany);
-
+/*CATEGORIES*/
+routes.get("/categories", getCategories);
+routes.post("/categories/create", postCategory);
+routes.put("/categories/put/:docId", putCategories);
 /*UTILS*/
 routes.post("/utils/create-solicitation", postCompanySolicitation);
 routes.post("/utils/fileUpload", imageUploader);

@@ -7,12 +7,6 @@ import cors from "cors";
 dotEnv.config();
 
 // App imports
-import home from "./controllers/home.js";
-import registerUser from "./controllers/registerUser.js";
-import getUsers from "./controllers/getUsers.js";
-import getUser from "./controllers/getUser.js";
-import updateUser from "./controllers/updateUser.js";
-import deleteUser from "./controllers/deleteUser.js";
 import routes from "./routes.js";
 import bodyParser from "body-parser";
 
