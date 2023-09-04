@@ -2,7 +2,7 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import app from "../firebase/app.js";
 import {
   addDoc,
-  and,
+  deleteDoc,
   collection,
   doc,
   getDoc,
@@ -11,7 +11,9 @@ import {
   query,
   updateDoc,
   where,
+  setDoc,
 } from "firebase/firestore";
+import { generateRandomString } from "../controllers/subColections.js";
 const auth = getAuth(app);
 const db = getFirestore(app);
 const user = auth.currentUser;
@@ -111,6 +113,26 @@ async function getByParams(tabela, params) {
     return response;
   }
 }
+async function getSubColections(tabela, doc, sub) {
+  try {
+    const querySnapshot = await getDocs(collection(db, tabela, doc, sub));
+    const response = {
+      status: true,
+      data: [],
+    };
+    querySnapshot.forEach((doc) => {
+      response.data.push({ ...doc.data(), docId: doc.id });
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+    const response = {
+      status: false,
+      message: error.message,
+    };
+    return response;
+  }
+}
 async function getByDocId(tabela, id) {
   try {
     const docRef = doc(db, tabela, id);
@@ -154,6 +176,35 @@ async function createDocument(tabela, data) {
     };
     return message;
   } catch (e) {
+    const message = {
+      status: false,
+      message: "Error adding document: ",
+      error: e,
+    };
+    return message;
+  }
+}
+async function createDocumentColection(tabela, docId, subcol, subdata) {
+  try {
+    const docIdAux = generateRandomString(20);
+
+    const newDate = new Date();
+    const path = `${tabela}/${docId}/${subcol}`;
+    await setDoc(doc(db, path, docIdAux), {
+      ...subdata,
+      createdAt: {
+        seconds: newDate.getTime() / 1000,
+        nanoseconds: newDate.getMilliseconds(),
+      },
+    });
+    const message = {
+      status: true,
+      message: "Document written",
+      id: docIdAux,
+    };
+    return message;
+  } catch (e) {
+    console.log(e);
     const message = {
       status: false,
       message: "Error adding document: ",
@@ -226,6 +277,17 @@ async function updateWhere(tabela, payload, chave, valor) {
     return { message: error, status: false };
   }
 }
+async function deleteByDocId(tabela, id) {
+  try {
+    const res = await deleteDoc(doc(db, tabela, id));
+    console.log(res);
+    return res;
+  } catch (error) {
+    console.log(error);
+    return { message: error, status: false };
+  }
+}
+
 export {
   getByParam,
   getByDocId,
@@ -234,4 +296,7 @@ export {
   updateWhere,
   getByParams,
   getAll,
+  deleteByDocId,
+  createDocumentColection,
+  getSubColections,
 };

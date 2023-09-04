@@ -11,14 +11,20 @@ import { imageUploader } from "./controllers/imageUploader.js";
 import {
   getCompany,
   getUrlCompany,
+  getUrlCompanyData,
   postCompany,
   putCompany,
 } from "./controllers/companies.js";
 import {
+  deleteCateSolicitations,
+  getCateSolicitations,
   getCategories,
+  getMyCategories,
   postCategory,
   putCategories,
 } from "./controllers/categories.js";
+import { createSubColections } from "./controllers/subColections.js";
+import { getMyFoods } from "./controllers/foods.js";
 
 const routes = express.Router();
 /*SIGNIN*/
@@ -34,13 +40,23 @@ routes.post("/companies/create", postCompany);
 routes.put("/companies/put/:id", putCompany);
 routes.get("/companies/company", getCompany);
 routes.get("/companies/url", getUrlCompany);
+routes.get("/companies/data", getUrlCompanyData);
+
 /*CATEGORIES*/
 routes.get("/categories", getCategories);
+routes.get("/categories/my-categories", getMyCategories);
+routes.get("/categories/solicitations", getCateSolicitations);
 routes.post("/categories/create", postCategory);
 routes.put("/categories/put/:docId", putCategories);
+routes.delete("/categories/delete/:docId", deleteCateSolicitations);
+/*FOODS*/
+routes.get("/foods/my-foods", getMyFoods);
+
 /*UTILS*/
 routes.post("/utils/create-solicitation", postCompanySolicitation);
 routes.post("/utils/fileUpload", imageUploader);
+routes.post("/utils/create-sub", createSubColections);
+
 /*ADEMIRO*/
 routes.get("/ademiro/getSolicitations", getSolicitations);
 routes.put("/ademiro/putSolicitations/:id", keepSolicitations);
