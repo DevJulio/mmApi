@@ -23,7 +23,10 @@ import {
   postCategory,
   putCategories,
 } from "./controllers/categories.js";
-import { createSubColections } from "./controllers/subColections.js";
+import {
+  createSubColections,
+  putSubColections,
+} from "./controllers/subColections.js";
 import { getMyFoods } from "./controllers/foods.js";
 
 const routes = express.Router();
@@ -56,6 +59,7 @@ routes.get("/foods/my-foods", getMyFoods);
 routes.post("/utils/create-solicitation", postCompanySolicitation);
 routes.post("/utils/fileUpload", imageUploader);
 routes.post("/utils/create-sub", createSubColections);
+routes.put("/utils/put-sub/:docId", putSubColections);
 
 /*ADEMIRO*/
 routes.get("/ademiro/getSolicitations", getSolicitations);

@@ -1,4 +1,3 @@
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import app from "../firebase/app.js";
 import {
   addDoc,
@@ -14,9 +13,7 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { generateRandomString } from "../controllers/subColections.js";
-const auth = getAuth(app);
 const db = getFirestore(app);
-const user = auth.currentUser;
 
 async function getAll(tabela) {
   try {
@@ -230,6 +227,25 @@ async function updateDocument(tabela, data, docId) {
     return { message: "Error: ", e, status: false };
   }
 }
+async function updateDocumentColection(tabela, docId, subcol, subdata) {
+  const path = `${tabela}/${docId}/${subcol}`;
+  const docRef = doc(db, path, subdata.docId);
+  const newDate = new Date();
+
+  try {
+    await updateDoc(docRef, {
+      ...subdata,
+      updatedAt: {
+        seconds: newDate.getTime() / 1000,
+        nanoseconds: newDate.getMilliseconds(),
+      },
+    });
+    return { message: "update success", status: true };
+  } catch (e) {
+    console.log(e);
+    return { message: "Error: ", e, status: false };
+  }
+}
 async function updateWhere(tabela, payload, chave, valor) {
   try {
     const newDate = new Date();
@@ -280,7 +296,6 @@ async function updateWhere(tabela, payload, chave, valor) {
 async function deleteByDocId(tabela, id) {
   try {
     const res = await deleteDoc(doc(db, tabela, id));
-    console.log(res);
     return res;
   } catch (error) {
     console.log(error);
@@ -299,4 +314,5 @@ export {
   deleteByDocId,
   createDocumentColection,
   getSubColections,
+  updateDocumentColection,
 };
