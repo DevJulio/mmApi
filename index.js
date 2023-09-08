@@ -1,6 +1,7 @@
 // Node imports
 import express from "express";
 import dotEnv from "dotenv";
+
 import cors from "cors";
 
 // Configurando variáveis de ambiente
