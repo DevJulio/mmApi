@@ -28,6 +28,7 @@ import {
   putSubColections,
 } from "./controllers/subColections.js";
 import { getMyFoods } from "./controllers/foods.js";
+import { deleteOffers, getMyOffers } from "./controllers/offers.js";
 
 const routes = express.Router();
 /*SIGNIN*/
@@ -54,6 +55,9 @@ routes.put("/categories/put/:docId", putCategories);
 routes.delete("/categories/delete/:docId", deleteCateSolicitations);
 /*FOODS*/
 routes.get("/foods/my-foods", getMyFoods);
+/*OFFERS */
+routes.get("/offers/my-offers", getMyOffers);
+routes.delete("/offers/delete/:companyDocId/:offerDocId/", deleteOffers);
 
 /*UTILS*/
 routes.post("/utils/create-solicitation", postCompanySolicitation);
